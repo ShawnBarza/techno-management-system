@@ -1,0 +1,8 @@
+{
+  "name": "powermate",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "react-scripts test --watchAll=false",
+    "test:watch": "react-scripts test"
+  }
+}
