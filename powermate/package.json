@@ -34,5 +34,8 @@
   "bugs": {
     "url": "https://github.com/ShawnBarza/techno-management-system/issues"
   },
-  "homepage": "https://github.com/ShawnBarza/techno-management-system#readme"
+  "homepage": "https://github.com/ShawnBarza/techno-management-system#readme",
+  "devDependencies": {
+    "react-scripts": "^5.0.1"
+  }
 }
