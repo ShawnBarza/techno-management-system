@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "768452762216",
+    "project_id": "powermate-management",
+    "storage_bucket": "powermate-management.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:768452762216:android:efbec5716cd2259b4b79dd",
+        "android_client_info": {
+          "package_name": "com.mari.powermate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTalpxj2x60DuYb2IaLwHFcFFVI2sycpE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
