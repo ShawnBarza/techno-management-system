@@ -1,13 +1,14 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import * as Network from 'expo-network';
-import { subscribeToDevice, toggleDevice, DeviceStatus } from '../utils/arduino';
+import ArduinoService, { DeviceStatus } from '../../lib/arduino';
 
 export default function Home() {
   const [power1Status, setPower1Status] = useState(false);
   const [power2Status, setPower2Status] = useState(false);
   const [ipAddress, setIpAddress] = useState('Loading...');
+  const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
     async function getNetworkInfo() {
@@ -15,28 +16,36 @@ export default function Home() {
       setIpAddress(ip);
     }
     getNetworkInfo();
-  }, []);
+    
+    // Initialize Arduino service
+    ArduinoService.initialize();
+    
+    // Set up connection subscription
+    const unsubscribeConnection = ArduinoService.subscribeToConnection((connected) => {
+      setIsConnected(connected);
+    });
 
-  useEffect(() => {
-    const unsubscribe1 = subscribeToDevice('device1', (status) => {
+    // Set up device subscriptions
+    const unsubscribe1 = ArduinoService.subscribeToDevice('device1', (status) => {
       setPower1Status(status === DeviceStatus.ON);
     });
 
-    const unsubscribe2 = subscribeToDevice('device2', (status) => {
+    const unsubscribe2 = ArduinoService.subscribeToDevice('device2', (status) => {
       setPower2Status(status === DeviceStatus.ON);
     });
 
     return () => {
       unsubscribe1();
       unsubscribe2();
+      unsubscribeConnection();
     };
   }, []);
 
   const handleToggle = async (device: string, status: boolean) => {
     try {
-      await toggleDevice(device, status ? DeviceStatus.ON : DeviceStatus.OFF);
+      await ArduinoService.toggleDevice(device, status ? DeviceStatus.ON : DeviceStatus.OFF);
     } catch (error) {
-      console.error(`Error toggling ${device}:`, error);
+      Alert.alert('Error', 'Failed to toggle device. Please check connection.');
     }
   };
 
@@ -45,8 +54,14 @@ export default function Home() {
       <Text style={styles.title}>PowerMate Management</Text>
       
       <View style={styles.networkInfo}>
-        <Ionicons name="wifi" size={20} color="#666" />
-        <Text style={styles.ipText}>IP: {ipAddress}</Text>
+        <Ionicons 
+          name="wifi" 
+          size={20} 
+          color={isConnected ? '#4CAF50' : '#FF5252'} 
+        />
+        <Text style={styles.ipText}>
+          IP: {ipAddress} ({isConnected ? 'Connected' : 'Disconnected'})
+        </Text>
       </View>
       
       <View style={styles.powerContainer}>
