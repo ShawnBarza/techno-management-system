@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import * as Network from 'expo-network';
 import ArduinoService, { DeviceStatus } from '../../lib/arduino';
+import React from 'react';
 
 export default function Home() {
   const [power1Status, setPower1Status] = useState(false);

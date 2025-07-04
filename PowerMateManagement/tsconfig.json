@@ -1,17 +1,32 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "strict": true,
-    "typeRoots": ["./types"],
-    "moduleResolution": "node",
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "es6"
+    ],
     "allowJs": true,
-    "resolveJsonModule": true
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx"
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts",
-    "types/env.d.ts"
+    "src",
+    "components",
+    "services",
+    "types",
+    "utils",
+    "config"
   ]
 }
