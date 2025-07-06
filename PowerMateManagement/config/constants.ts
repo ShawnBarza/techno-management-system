@@ -1,6 +1,6 @@
 export const WS_CONFIG = {
   // Update these values according to your ESP32 setup
-  HOST: '192.168.254.113', // Your ESP32's IP address
+  HOST: '192.168.43.58', // Your ESP32's IP address
   PORT: '80',
   CONNECTION_TIMEOUT: 10000,
   RETRY_INTERVAL: 5000,
@@ -9,7 +9,7 @@ export const WS_CONFIG = {
 
 export const ESP32_CONFIG = {
   // Your ESP32 WiFi network
-  WIFI_SSID: 'Timmy_2.4',
+  WIFI_SSID: `Shawn's Phone`,
   // API endpoints
   ENDPOINTS: {
     STATUS: '/status',
