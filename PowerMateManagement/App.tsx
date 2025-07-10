@@ -1,25 +1,21 @@
 import React from 'react';
-import { StyleSheet, View, SafeAreaView, StatusBar } from 'react-native';
-import { ESP32Controller } from './components/ESP32Controller';
+import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
+import MainScreen from './screens/MainScreen';
 
-export default function App() {
+const App: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
-      <View style={styles.content}>
-        <ESP32Controller />
-      </View>
+      <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
+      <MainScreen />
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  content: {
-    flex: 1,
-    padding: 16,
+    backgroundColor: '#f5f5f5',
   },
 });
+
+export default App;
