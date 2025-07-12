@@ -1,44 +1,38 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
 interface LogoComponentProps {
   size?: 'small' | 'medium' | 'large';
   showText?: boolean;
 }
 
-export const LogoComponent: React.FC<LogoComponentProps> = ({ 
-  size = 'medium', 
-  showText = true 
-}) => {
-  const sizeStyles = {
-    small: { width: 40, height: 40 },
-    medium: { width: 60, height: 60 },
-    large: { width: 80, height: 80 }
+export const LogoComponent: React.FC<LogoComponentProps> = ({ size = 'medium', showText = false }) => {
+  const logoSizes = {
+    small: 40,
+    medium: 60,
+    large: 80
+  };
+
+  const textSizes = {
+    small: 12,
+    medium: 16,
+    large: 20
   };
 
   return (
     <View style={styles.container}>
       <View style={[
-        styles.logoContainer, 
+        styles.logo,
         { 
-          width: sizeStyles[size].width, 
-          height: sizeStyles[size].height 
+          width: logoSizes[size], 
+          height: logoSizes[size],
+          borderRadius: logoSizes[size] / 2
         }
       ]}>
-        <Image
-          source={require('../assets/images/logo.png')} // Adjust path if needed
-          style={[
-            styles.logoImage,
-            { 
-              width: sizeStyles[size].width, 
-              height: sizeStyles[size].height 
-            }
-          ]}
-          resizeMode="contain"
-        />
+        <Text style={[styles.logoText, { fontSize: textSizes[size] }]}>PM</Text>
       </View>
       {showText && (
-        <Text style={styles.brandText}>PowerMate</Text>
+        <Text style={[styles.brandText, { fontSize: textSizes[size] }]}>PowerMate</Text>
       )}
     </View>
   );
@@ -48,25 +42,18 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
   },
-  logoContainer: {
+  logo: {
+    backgroundColor: '#2196F3',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    marginBottom: 8,
   },
-  logoImage: {
-    borderRadius: 10, // Adjust for rounded corners if needed
+  logoText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
   brandText: {
-    marginTop: 8,
-    fontSize: 16,
-    fontWeight: 'bold',
     color: '#2c3e50',
+    fontWeight: 'bold',
   },
 });

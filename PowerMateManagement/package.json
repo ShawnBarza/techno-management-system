@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web"
   },
   "dependencies": {
@@ -16,18 +16,24 @@
     "@react-navigation/native": "^7.1.14",
     "@react-navigation/stack": "^7.4.2",
     "@types/hammerjs": "^2.0.46",
+    "buffer": "^6.0.3",
+    "events": "^3.3.0",
     "expo": "53.0.19",
     "expo-dev-client": "~5.2.4",
     "expo-font": "~13.3.2",
+    "expo-location": "~18.1.6",
     "expo-network": "~7.1.5",
     "expo-status-bar": "~2.2.3",
     "hoist-non-react-statics": "^3.3.2",
+    "mqtt": "^5.13.2",
+    "paho-mqtt": "^1.1.0",
     "react": "19.0.0",
     "react-is": "^16.13.1",
     "react-native": "0.79.5",
     "react-native-gesture-handler": "^2.27.1",
     "react-native-safe-area-context": "5.4.0",
-    "react-native-screens": "~4.11.1"
+    "react-native-screens": "~4.11.1",
+    "react-native-tcp-socket": "^6.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

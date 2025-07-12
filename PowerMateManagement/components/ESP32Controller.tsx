@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, ScrollView, Alert } from 'react-native';
 import { ESP32Service } from '../services/ESP32Service';
 import { ESP32Status } from '../types/esp32';
-import { LogoComponent } from './LogoComponent';
 
 export const ESP32Controller: React.FC = () => {
   const [status, setStatus] = useState<ESP32Status | null>(null);
@@ -498,7 +497,7 @@ export const ESP32Controller: React.FC = () => {
   if (isLoading) {
     return (
       <View style={styles.centered}>
-        <LogoComponent size="large" />
+        <Text style={styles.logoText}>PM</Text>
         <Text style={styles.loadingText}>Connecting to ESP32...</Text>
       </View>
     );
@@ -507,7 +506,7 @@ export const ESP32Controller: React.FC = () => {
   if (!isConnected) {
     return (
       <View style={styles.centered}>
-        <LogoComponent size="medium" />
+        <Text style={styles.logoText}>PM</Text>
         <Text style={styles.title}>ESP32 Not Connected</Text>
         <TouchableOpacity style={styles.retryButton} onPress={testConnection}>
           <Text style={styles.buttonText}>Retry Connection</Text>
@@ -519,7 +518,7 @@ export const ESP32Controller: React.FC = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <LogoComponent size="medium" showText={true} />
+        <Text style={styles.logoText}>PowerMate</Text>
         <Text style={styles.title}>Management System</Text>
         <Text style={styles.subtitle}>Smart Relay Control</Text>
       </View>
@@ -738,7 +737,6 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: 20,
     paddingVertical: 20,
     backgroundColor: '#f8f9fa',
     borderRadius: 12,
@@ -933,5 +931,11 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: 14,
     marginBottom: 4,
+  },
+  logoText: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#2196F3',
+    marginBottom: 16,
   },
 });

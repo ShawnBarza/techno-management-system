@@ -1,13 +1,15 @@
 import React from 'react';
-import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import MainScreen from './screens/MainScreen';
 
 const App: React.FC = () => {
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
+    <SafeAreaProvider>
+      <StatusBar style="auto" />
       <MainScreen />
-    </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 

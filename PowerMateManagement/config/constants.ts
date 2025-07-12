@@ -1,30 +1,16 @@
-export const WS_CONFIG = {
-  // Update these values according to your ESP32 setup
-  HOST: '192.168.254.113', // Your ESP32's IP address
-  PORT: '80',
-  CONNECTION_TIMEOUT: 10000,
-  RETRY_INTERVAL: 5000,
-  MAX_RETRIES: 3
-};
-
 export const ESP32_CONFIG = {
   PORT: 80,
-  
-  // API endpoints matching Arduino code
   ENDPOINTS: {
     STATUS: '/status',
     SET_RELAY: '/set',
     SET_TIMER: '/settimer',
-    CLEAR_OVERRIDE: '/clearoverride'
+    CLEAR_OVERRIDE: '/clearoverride',
+    INFO: '/info'
   },
-  
-  // Connection settings
-  CONNECTION_TIMEOUT: 10000,
-  RETRY_INTERVAL: 5000,
+  CONNECTION_TIMEOUT: 5000,
+  RETRY_INTERVAL: 2000,
   MAX_RETRIES: 3,
   POLL_INTERVAL: 5000,
-  
-  // Device info
   RELAY_COUNT: 2,
   DEVICE_NAME: 'PowerMate'
 };
@@ -36,9 +22,10 @@ export const DISCOVERY_CONFIG = {
   SERVICE_TYPE: '_http._tcp.local'
 };
 
-export const getWebSocketUrl = () => `ws://${WS_CONFIG.HOST}:${WS_CONFIG.PORT}`;
-export const getHttpUrl = (host: string) => {
-  return `http://${host}:${ESP32_CONFIG.PORT}`;
+// Remove hardcoded HOST since we're using dynamic discovery
+export const getHttpUrl = () => {
+  // This will be handled by ESP32Service
+  return '';
 };
 
 // IP address validation

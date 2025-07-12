@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "PowerMate Management",
+    "slug": "powermate-management",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#2196F3"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#2196F3"
+      },
+      "permissions": [
+        "INTERNET",
+        "ACCESS_WIFI_STATE",
+        "CHANGE_WIFI_STATE",
+        "ACCESS_FINE_LOCATION"
+      ],
+
+      "usesCleartextTraffic": true
+    },
+    "web": {},
+    "plugins": ["expo-dev-client"]
+  }
+}
