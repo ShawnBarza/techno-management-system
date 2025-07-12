@@ -1,9 +1,13 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, TouchableOpacity, TextInput, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, ScrollView, Alert, Image } from 'react-native';
 import { ESP32Service } from '../services/ESP32Service';
 import { ESP32Status } from '../types/esp32';
 
-export const ESP32Controller: React.FC = () => {
+interface ESP32ControllerProps {
+  onDisconnect?: () => void;
+}
+
+export const ESP32Controller: React.FC<ESP32ControllerProps> = ({ onDisconnect }) => {
   const [status, setStatus] = useState<ESP32Status | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -140,13 +144,6 @@ export const ESP32Controller: React.FC = () => {
     const isInManualMode = relay === 1 ? manualMode.r1 : manualMode.r2;
     
     if (isInManualMode) {
-      if (operationLockRef.current[relay]) {
-        Alert.alert('Please Wait', `Relay ${relay} operation in progress...`);
-        return;
-      }
-
-      operationLockRef.current[relay] = true;
-
       try {
         const newState = !currentState;
         lastManualChangeRef.current[relay] = Date.now();
@@ -163,20 +160,12 @@ export const ESP32Controller: React.FC = () => {
           }
           
           console.log(`Manual control: Relay ${relay} set to ${newState ? 'ON' : 'OFF'}`);
-          
           setTimeout(() => esp32Service.getStatus(), 1000);
-          
-          Alert.alert(
-            'Manual Control',
-            `Relay ${relay} turned ${newState ? 'ON' : 'OFF'}`
-          );
         } else {
           Alert.alert('Error', `Failed to control Relay ${relay}.`);
         }
-      } finally {
-        setTimeout(() => {
-          operationLockRef.current[relay] = false;
-        }, 2000);
+      } catch (error) {
+        console.error(`Relay ${relay} control error:`, error);
       }
     } else {
       Alert.alert(
@@ -202,13 +191,6 @@ export const ESP32Controller: React.FC = () => {
       Alert.alert('Error', 'Cannot enable manual mode: No status available');
       return;
     }
-
-    if (operationLockRef.current[relay]) {
-      Alert.alert('Please Wait', `Relay ${relay} operation in progress...`);
-      return;
-    }
-
-    operationLockRef.current[relay] = true;
 
     try {
       const currentState = relay === 1 ? !!status.r1 : !!status.r2;
@@ -236,21 +218,12 @@ export const ESP32Controller: React.FC = () => {
         'Manual Mode Enabled',
         `Relay ${relay} is now in manual mode.\n\n✅ Current state: ${currentState ? 'ON' : 'OFF'}\n🔧 Use Control button for manual on/off\n\n${timerDisabled ? '✅ Timer disabled' : '⚠️ Timer disable may have failed'}`
       );
-    } finally {
-      setTimeout(() => {
-        operationLockRef.current[relay] = false;
-      }, 2000);
+    } catch (error) {
+      console.error(`Manual mode enable error for relay ${relay}:`, error);
     }
   };
 
   const quickToggle = async (relay: number, state: boolean) => {
-    if (operationLockRef.current[relay]) {
-      Alert.alert('Please Wait', `Relay ${relay} operation in progress...`);
-      return;
-    }
-
-    operationLockRef.current[relay] = true;
-
     try {
       lastManualChangeRef.current[relay] = Date.now();
       
@@ -264,10 +237,8 @@ export const ESP32Controller: React.FC = () => {
       } else {
         Alert.alert('Error', `Failed to toggle Relay ${relay}.`);
       }
-    } finally {
-      setTimeout(() => {
-        operationLockRef.current[relay] = false;
-      }, 1000);
+    } catch (error) {
+      console.error(`Quick toggle error for relay ${relay}:`, error);
     }
   };
 
@@ -494,10 +465,20 @@ export const ESP32Controller: React.FC = () => {
     }
   };
 
+  const handleDisconnect = () => {
+    esp32Service.stopPolling();
+    esp32Service.disconnectDevice(); // Add this method to ESP32Service
+    onDisconnect?.();
+  };
+
   if (isLoading) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.logoText}>PM</Text>
+        <Image 
+          source={require('../assets/images/logo.png')}
+          style={styles.logo}
+          resizeMode="contain"
+        />
         <Text style={styles.loadingText}>Connecting to ESP32...</Text>
       </View>
     );
@@ -506,7 +487,11 @@ export const ESP32Controller: React.FC = () => {
   if (!isConnected) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.logoText}>PM</Text>
+        <Image 
+          source={require('../assets/images/logo.png')}
+          style={styles.logo}
+          resizeMode="contain"
+        />
         <Text style={styles.title}>ESP32 Not Connected</Text>
         <TouchableOpacity style={styles.retryButton} onPress={testConnection}>
           <Text style={styles.buttonText}>Retry Connection</Text>
@@ -518,9 +503,22 @@ export const ESP32Controller: React.FC = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.logoText}>PowerMate</Text>
-        <Text style={styles.title}>Management System</Text>
-        <Text style={styles.subtitle}>Smart Relay Control</Text>
+        <TouchableOpacity 
+          style={styles.disconnectButton} 
+          onPress={handleDisconnect}
+        >
+          <Text style={styles.buttonText}>Disconnect</Text>
+        </TouchableOpacity>
+        
+        <View style={styles.headerContent}>
+          <Image 
+            source={require('../assets/images/logo.png')}
+            style={styles.headerLogo}
+            resizeMode="contain"
+          />
+          <Text style={styles.title}>PowerMate Management System</Text>
+          <Text style={styles.subtitle}>Smart Relay Control</Text>
+        </View>
       </View>
       
       {status && (
@@ -531,12 +529,12 @@ export const ESP32Controller: React.FC = () => {
           <View style={styles.statusPanel}>
             <Text style={styles.statusPanelTitle}>🎛️ Control Mode</Text>
             <Text style={styles.statusPanelText}>
-              Relay 1: {manualMode.r1 ? '🔧 MANUAL MODE' : 
+              Socket 1: {manualMode.r1 ? '🔧 MANUAL MODE' : 
                 isTimeInRange(status.time, status.r1_on, status.r1_off) ? 
                 '🟢 TIMER ACTIVE' : '⚫ TIMER INACTIVE'}
             </Text>
             <Text style={styles.statusPanelText}>
-              Relay 2: {manualMode.r2 ? '🔧 MANUAL MODE' : 
+              Socket 2: {manualMode.r2 ? '🔧 MANUAL MODE' : 
                 isTimeInRange(status.time, status.r2_on, status.r2_off) ? 
                 '🟢 TIMER ACTIVE' : '⚫ TIMER INACTIVE'}
             </Text>
@@ -544,7 +542,7 @@ export const ESP32Controller: React.FC = () => {
           
           <View style={styles.relayControls}>
             <View style={styles.relayControl}>
-              <Text style={styles.relayTitle}>Relay 1 (Pin 17)</Text>
+              <Text style={styles.relayTitle}>Socket 1</Text>
               <View style={styles.relayStatus}>
                 <Text style={styles.statusText}>
                   Status: <Text style={[styles.statusValue, { color: status.r1 ? '#4CAF50' : '#F44336' }]}>
@@ -626,7 +624,7 @@ export const ESP32Controller: React.FC = () => {
             </View>
 
             <View style={styles.relayControl}>
-              <Text style={styles.relayTitle}>Relay 2 (Pin 18)</Text>
+              <Text style={styles.relayTitle}>Socket 2</Text>
               <View style={styles.relayStatus}>
                 <Text style={styles.statusText}>
                   Status: <Text style={[styles.statusValue, { color: status.r2 ? '#4CAF50' : '#F44336' }]}>
@@ -736,11 +734,11 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   header: {
-    alignItems: 'center',
     paddingVertical: 20,
     backgroundColor: '#f8f9fa',
     borderRadius: 12,
     marginBottom: 24,
+    paddingTop: 60, // Add space for disconnect button
   },
   title: {
     fontSize: 24,
@@ -935,7 +933,40 @@ const styles = StyleSheet.create({
   logoText: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#2196F3',
+    color: '#4CAF50', // Changed from '#2196F3' to '#4CAF50'
     marginBottom: 16,
+  },
+  disconnectButton: {
+    backgroundColor: '#F44336',
+    padding: 8,
+    borderRadius: 6,
+    position: 'absolute',
+    right: 16,
+    top: 16,
+    zIndex: 1,
+  },
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    paddingHorizontal: 16,
+  },
+  headerTextContainer: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  headerContent: {
+    alignItems: 'center',
+  },
+  logo: {
+    width: 120,
+    height: 120,
+    marginBottom: 16,
+  },
+  headerLogo: {
+    width: 80,
+    height: 80,
+    marginBottom: 8,
   },
 });

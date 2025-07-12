@@ -68,7 +68,7 @@ const RelayControl: React.FC<RelayControlProps> = ({ relayNumber, connected }) =
 
   return (
     <View style={[styles.container, isOverride && styles.overrideContainer]}>
-      <Text style={styles.title}>Relay {relayNumber}</Text>
+      <Text style={styles.title}>Socket # {relayNumber}</Text>
       
       <View style={styles.statusContainer}>
         <Text style={[styles.statusText, relayState ? styles.on : styles.off]}>
